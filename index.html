@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV Generator</title>
+<meta name="description" content="Maak gratis een net cv: vul je gegevens in, kies lay-out, kleur en lettertype, en download het als PDF. Alles blijft in je eigen browser.">
+<meta property="og:title" content="CV Generator">
+<meta property="og:description" content="Gratis een modern cv maken en als PDF opslaan. Geen account, alles blijft in je browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' rx='7' fill='%2303a9f4'/%3E%3Ccircle cx='12' cy='12' r='3.2' fill='%23fff'/%3E%3Crect x='17' y='9.5' width='7' height='2' rx='1' fill='%23fff'/%3E%3Crect x='17' y='13' width='5' height='2' rx='1' fill='%23fff' opacity='.6'/%3E%3Crect x='8' y='19' width='16' height='2' rx='1' fill='%23fff'/%3E%3Crect x='8' y='23' width='11' height='2' rx='1' fill='%23fff' opacity='.6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:wght@400;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+<link rel="stylesheet" href="style.css?v=1">
+<style id="pagecss"></style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" fill="var(--accent)"/><circle cx="12" cy="12" r="3.2" fill="#fff"/><rect x="17" y="9.5" width="7" height="2" rx="1" fill="#fff"/><rect x="17" y="13" width="5" height="2" rx="1" fill="#fff" opacity=".6"/><rect x="8" y="19" width="16" height="2" rx="1" fill="#fff"/><rect x="8" y="23" width="11" height="2" rx="1" fill="#fff" opacity=".6"/></svg>
+    <div><b>CV Generator</b><small>Vul in, kies een stijl, download als PDF</small></div></div>
+  <nav>
+    <a href="https://github.com/Rein033/cv-generator" class="ghost"><i class="mdi mdi-github"></i> <span>GitHub</span></a>
+    <a href="https://buymeacoffee.com/rein033" class="coffee" target="_blank" rel="noopener"><i class="mdi mdi-coffee"></i> <span>Buy me a coffee</span></a>
+  </nav>
+</header>
+
+<main>
+  <section class="left" id="left"></section>
+
+  <section class="right">
+    <div class="panel sticky">
+      <div class="ptools">
+        <div class="btns">
+          <button type="button" class="ib" id="undo" title="Ongedaan maken (Ctrl+Z)"><i class="mdi mdi-undo"></i></button>
+          <button type="button" class="ib" id="redo" title="Opnieuw (Ctrl+Y)"><i class="mdi mdi-redo"></i></button>
+          <button type="button" class="ib" id="theme" title="Licht / donker"><i class="mdi mdi-theme-light-dark"></i></button>
+        </div>
+        <div class="btns">
+          <button type="button" class="small" id="copytxt" title="Kopieer het cv als platte tekst"><i class="mdi mdi-content-copy"></i> Tekst</button>
+          <button type="button" class="small" id="export" title="Bewaar je cv als bestand"><i class="mdi mdi-download"></i> Bewaren</button>
+          <button type="button" class="small" id="import" title="Open een bewaard cv-bestand"><i class="mdi mdi-upload"></i> Openen</button>
+          <button type="button" class="main" id="print"><i class="mdi mdi-file-pdf-box"></i> Download PDF</button>
+        </div>
+      </div>
+      <div class="desk" id="desk"><div class="scaler" id="scaler"><div class="paper" id="paper"></div></div></div>
+      <p class="hint">Bij <b>Download PDF</b> kies je als printer <b>Opslaan als PDF</b>. Zet in het printvenster <b>Kopteksten en voetteksten</b> uit
+        en <b>Achtergrondafbeeldingen</b> aan. De rode stippellijn laat ongeveer zien waar een nieuwe pagina begint.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Gemaakt door <a href="https://github.com/Rein033">Rein033</a> · Alles blijft in je eigen browser, er gaat niets naar een server ·
+  Ook van mij: <a href="https://uselesssite.nl/ha-card-generator/">HA Card Generator</a>
+</footer>
+
+<input type="file" id="file" accept=".json,application/json" hidden>
+<input type="file" id="photofile" accept="image/*" hidden>
+<script src="app.js?v=1"></script>
+</body>
+</html>
