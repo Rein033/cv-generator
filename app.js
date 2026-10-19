@@ -221,7 +221,6 @@ function teken() {
   paper.innerHTML = cvHtml();
   // Afdrukken: pagina 1 begint bovenaan het papier (de opvulling van het cv geeft de marge), volgende pagina's krijgen dezelfde marge
   $('#pagecss').textContent = `@page { size: A4; margin: ${m}mm 0; } @page :first { margin-top: 0; }`;
-  document.title = cv.p.naam ? `CV ${cv.p.naam}` : 'CV Generator';
   schaal();
   // pagina-einden ongeveer aangeven
   const mm = paper.offsetWidth / 210, h = paper.offsetHeight / mm;
@@ -239,6 +238,10 @@ function schaal() {
   sc.style.height = (paper.offsetHeight * f) + 'px';
 }
 window.addEventListener('resize', schaal);
+/* Bij afdrukken krijgt de PDF de naam van de persoon; daarna weer de normale paginatitel (voor zoekmachines) */
+let paginaTitel = document.title;
+window.addEventListener('beforeprint', () => { paginaTitel = document.title; if (cv.p.naam) document.title = `CV ${cv.p.naam}`; });
+window.addEventListener('afterprint', () => { document.title = paginaTitel; });
 
 /* ════════ De editor (links) ════════ */
 const fld = (label, path, val, opts = {}) => {
