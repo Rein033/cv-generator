@@ -102,6 +102,7 @@ function laad() {
 
 let cv = laad();
 const open = new Set(['persoon']);   // welke panelen en items openstaan (alleen voor de editor)
+let startWeg = false;                // het welkomstblok is weggeklikt
 
 /* ── Opslaan + ongedaan maken ── */
 const hist = [JSON.stringify(cv)]; let hpos = 0; let htimer = null;
@@ -338,10 +339,24 @@ function sectiePaneel(s, idx) {
   return tegel(s.id, def.ic, esc(s.kop || def.nl), s.aan ? n : 'Verborgen', inhoud, extra, s.aan ? '' : 'off');
 }
 
+/* Welkom voor wie nog niets heeft ingevuld: kiezen hoe je begint */
+function startPaneel() {
+  if (startWeg || heeftInhoud()) return '';
+  return `<div class="panel start"><h2>Maak gratis je cv in drie stappen</h2>
+    <ol class="stappen"><li><i class="mdi mdi-form-textbox"></i><span><b>Vul in</b>Gegevens, werk en opleiding</span></li>
+      <li><i class="mdi mdi-palette"></i><span><b>Kies een stijl</b>Lay-out, kleur en lettertype</span></li>
+      <li><i class="mdi mdi-file-pdf-box"></i><span><b>Download</b>Als echte PDF, zonder watermerk</span></li></ol>
+    <div class="layouts kies">${Object.keys(layoutSvg).map((k) => `<button type="button" data-start="${k}" class="${cv.layout === k ? 'on' : ''}">${layoutSvg[k]}${k[0].toUpperCase() + k.slice(1)}</button>`).join('')}</div>
+    <div class="btns"><button type="button" class="main" data-start="leeg"><i class="mdi mdi-pencil"></i> Leeg beginnen</button>
+      <button type="button" class="small" data-start="voorbeeld"><i class="mdi mdi-auto-fix"></i> Begin met een voorbeeld</button>
+      <button type="button" class="small" data-start="openen"><i class="mdi mdi-upload"></i> Bewaard cv openen</button></div>
+    <p class="hint"><i class="mdi mdi-shield-lock-outline"></i> Geen account nodig. Je cv blijft in je eigen browser en gaat nergens naartoe.</p></div>`;
+}
+
 function editor() {
   const y = window.scrollY, act = document.activeElement?.dataset?.p;
   const ontbreekt = Object.keys(SOORTEN).filter((k) => k === 'extra' || !cv.s.some((s) => s.soort === k));
-  $('#left').innerHTML = ontwerpPaneel() + persoonPaneel() + cv.s.map(sectiePaneel).join('')
+  $('#left').innerHTML = startPaneel() + ontwerpPaneel() + persoonPaneel() + cv.s.map(sectiePaneel).join('')
     + `<div class="panel"><div class="tile-head" style="cursor:default"><div class="tile-ic"><i class="mdi mdi-plus"></i></div><div class="tile-txt"><b>Onderdeel toevoegen</b><small>Kies wat je nog op je cv wilt</small></div></div>
       <div class="addsec">${ontbreekt.map((k) => `<button type="button" data-sadd="${k}"><i class="mdi ${SOORTEN[k].ic}"></i> ${SOORTEN[k].nl}</button>`).join('')}</div>
       <div class="btns" style="margin-top:14px"><button type="button" class="small" id="voorbeeld"><i class="mdi mdi-auto-fix"></i> Voorbeeld laden</button>
@@ -397,6 +412,13 @@ left.addEventListener('click', (e) => {
   else if (d.sadd) { const s = nieuweSectie(d.sadd, cv.taal); cv.s.push(s); open.add(s.id); if (s.items[0]) open.add(s.items[0].id); }
   else if (d.toggle) { if (e.target.closest('.tile-btns button')) return; open.has(d.toggle) ? open.delete(d.toggle) : open.add(d.toggle); opnieuw = false; b.closest('.panel').classList.toggle('open'); }
   else if (d.kid) { if (e.target.closest('button')) return; open.has(d.kid) ? open.delete(d.kid) : open.add(d.kid); opnieuw = false; b.closest('.kid').classList.toggle('open'); }
+  else if (d.start) {
+    startWeg = true;
+    if (d.start === 'openen') { editor(); $('#file').click(); return; }
+    if (d.start === 'voorbeeld') { cv = voorbeeldCV(); toast('Voorbeeld geladen: pas het aan naar jouw cv'); }
+    else if (layoutSvg[d.start]) { cv.layout = d.start; startWeg = false; }
+    else { open.add('persoon'); editor(); teken(); setTimeout(() => $('[data-p="p.naam"]')?.focus(), 0); return; }
+  }
   else if (b.id === 'fotokies') { $('#photofile').click(); return; }
   else if (b.id === 'fotoweg') { cv.p.foto = ''; }
   else if (b.id === 'voorbeeld') { if (heeftInhoud() && !confirm('Je huidige cv vervangen door het voorbeeld? (Ongedaan maken kan daarna nog)')) return; cv = voorbeeldCV(); }
@@ -422,7 +444,10 @@ $('#photofile').addEventListener('change', (e) => {
 });
 
 /* ── Knoppen boven het voorbeeld ── */
-$('#print').onclick = () => { teken(); window.print(); };
+$('#print').onclick = () => downloadPdf();
+$('#printen').onclick = () => { teken(); window.print(); };
+$('#mpdf').onclick = () => downloadPdf();
+$('#mvoorbeeld').onclick = () => $('.right').scrollIntoView({ behavior: 'smooth' });
 $('#undo').onclick = () => terug(-1);
 $('#redo').onclick = () => terug(1);
 document.addEventListener('keydown', (e) => {
